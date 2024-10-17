@@ -34,7 +34,8 @@
   (.. self.a " + " self.b "i"))
 
 (fn Complex._mt.__len [self]
-  (math.sqrt (+ (* self.a self.a) (* self.b self.b))))
+  (math.sqrt (+ (* self.a self.a)
+                (* self.b self.b))))
 
 (fn Complex._mt.__eq [a b]
     (and (= a.a b.a) (= a.b b.b)))
@@ -55,6 +56,28 @@
   (let [a (Complex.to-complex a)
         b (Complex.to-complex b)]
     (Complex.new (- a.a b.a) (- a.b b.b))))
+
+(fn Complex._mt.__unm [self]
+  (Complex.new (- self.a) (- self.b)))
+
+(fn Complex._mt.__mul [a b]
+  (let [a (Complex.to-complex a)
+        b (Complex.to-complex b)]
+    (Complex.new (- (* a.a b.a) (* a.b b.b))
+                 (+ (* a.a b.b) (* a.b b.a)))))
+
+(fn Complex._mt.__div [a b]
+  (let [a (Complex.to-complex a)
+        b (Complex.to-complex b)
+        mag-squared (+ (* b.a b.a) (* b.b b.b))
+        real-numerator (+ (* a.a b.a) (* a.b b.b))
+        imaginary-numerator (- (* a.b b.a) (* a.a b.b))]
+    (Complex.new (/ real-numerator mag-squared)
+                 (/ imaginary-numerator mag-squared))))
+
+(fn Complex.get-reciprocal [self]
+  "Returns the reciprocal of the provided complex number."
+  (/ 1 self))
 
 (fn Complex.get-conjugate [self]
   "Returns the conjugate of the provided complex number."
