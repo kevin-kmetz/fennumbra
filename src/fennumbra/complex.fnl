@@ -36,12 +36,25 @@
 (fn Complex._mt.__len [self]
   (math.sqrt (+ (* self.a self.a) (* self.b self.b))))
 
-(fn Complex._mt.__eq [self other]
-  (and (= self.a other.a) (= self.b other.b)))
+(fn Complex._mt.__eq [a b]
+    (and (= a.a b.a) (= a.b b.b)))
 
-(fn Complex._mt.__add [self other]
-  ;; Implement next commit.
-  )
+(fn Complex._mt.__add [a b]
+  ;; All complex operation metamethods make no assumption about which of the
+  ;; arguments is the actual complex number, to address how Lua will try to
+  ;; invoke the metamethod if a non-complex is in the first position if it
+  ;; lacks a suitable metamethod itself.
+  ;;
+  ;; Equality is the exception, since equality in Lua behaves differently in a
+  ;; way that opposes what I'm trying to do.
+  (let [a (Complex.to-complex a)
+        b (Complex.to-complex b)]
+    (Complex.new (+ a.a b.a) (+ a.b b.b))))
+
+(fn Complex._mt.__sub [a b]
+  (let [a (Complex.to-complex a)
+        b (Complex.to-complex b)]
+    (Complex.new (- a.a b.a) (- a.b b.b))))
 
 (fn Complex.get-conjugate [self]
   "Returns the conjugate of the provided complex number."
