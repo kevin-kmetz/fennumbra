@@ -16,6 +16,20 @@
     (fn [self a b]
       (Complex.new a b))})
 
+(fn Complex.complex? [object]
+  "Returns true if the object is a complex number."
+  (let [metatable (getmetatable object)]
+    (if (and (= (type metatable) :table) (= metatable.__index Complex))
+      true
+      false)))
+
+(fn Complex.to-complex [number]
+  "Converts numbers to complex numbers; if passed a complex number, it returns the argument."
+  (case number
+    (where unknown (= (type unknown) :number)) (Complex.new number 0)
+    (where unknown (Complex.complex? unknown)) number
+    _ nil))
+
 (fn Complex._mt.__tostring [self]
   (.. self.a " + " self.b "i"))
 
@@ -24,6 +38,10 @@
 
 (fn Complex._mt.__eq [self other]
   (and (= self.a other.a) (= self.b other.b)))
+
+(fn Complex._mt.__add [self other]
+  ;; Implement next commit.
+  )
 
 (fn Complex.get-conjugate [self]
   "Returns the conjugate of the provided complex number."
