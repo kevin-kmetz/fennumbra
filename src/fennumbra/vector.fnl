@@ -60,6 +60,12 @@
         (- v (. b i))))
     nil))
 
+(fn Vector._mt.__unm [vector]
+  "Negates all components of a vector or array."
+  (Vector.new-from-array
+    (icollect [i v (ipairs vector)]
+      (- v))))
+
 (fn Vector._mt.__mul [a b]
   "Multiplies two vectors or arrays of the same dimensionality."
   (if (Vector.same-dimensionality? a b)
@@ -80,6 +86,7 @@
 (set Vector.equals? Vector._mt.__eq)
 (set Vector.add Vector._mt.__add)
 (set Vector.subtract Vector._mt.__sub)
+(set Vector.negate Vector._mt.__unm)
 (set Vector.multiply Vector._mt.__mul)
 (set Vector.divide Vector._mt.__div)
 
