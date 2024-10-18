@@ -11,6 +11,15 @@
     (setmetatable new-complex Complex._mt)
     new-complex))
 
+(fn Complex.new-polar [r phi]
+  "A constructor for a class representing complex numbers in polar coordinate form."
+  (assert (and (= (type r) :number) (= (type phi) :number))
+    "Invalid types passed in as arguments to the polar Complex constructor.")
+  (let [new-complex {:a (* r (math.cos phi))
+                     :b (* r (math.sin phi))}]
+    (setmetatable new-complex Complex._mt)
+    new-complex))
+
 (setmetatable Complex
   {:__call
     (fn [self a b]
@@ -82,5 +91,15 @@
 (fn Complex.get-conjugate [self]
   "Returns the conjugate of the provided complex number."
   (Complex.new self.a (- self.b)))
+
+(fn Complex.get-r [self]
+  "Expressing a complex number in polar coordinate form, returns the r-component (the magnitude/radius)."
+  (# self))
+
+(fn Complex.get-phi [self use-sin?]
+  "Expressing a complex number in polar coordinate form, returns the phi-component (the angle)."
+  (if use-sin?
+    (math.asin (/ self.b (# self)))
+    (math.acos (/ self.a (# self)))))
 
 Complex
