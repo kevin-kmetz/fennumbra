@@ -32,6 +32,7 @@
   (= (length a) (length b)))
 
 (fn Vector._mt.__eq [a b]
+  "Returns true if two vectors or arrays have the same dimensionality and have equal components."
   (if (not (Vector.same-dimensionality? a b))
     false
     (do
@@ -44,10 +45,42 @@
       (not difference-found?))))
 
 (fn Vector._mt.__add [a b]
+  "Sums two vectors or arrays of the same dimensionality."
   (if (Vector.same-dimensionality? a b)
     (Vector.new-from-array
       (icollect [i v (ipairs a)]
         (+ v (. b i))))
     nil))
+
+(fn Vector._mt.__sub [a b]
+  "For two vectors or arrays of the same dimensionality, subtracts the second from the first."
+  (if (Vector.same-dimensionality? a b)
+    (Vector.new-from-array
+      (icollect [i v (ipairs a)]
+        (- v (. b i))))
+    nil))
+
+(fn Vector._mt.__mul [a b]
+  "Multiplies two vectors or arrays of the same dimensionality."
+  (if (Vector.same-dimensionality? a b)
+    (Vector.new-from-array
+      (icollect [i v (ipairs a)]
+        (* v (. b i))))
+    nil))
+
+(fn Vector._mt.__div [a b]
+  "Divides the second vector or array into the first, assuming they have the same dimensionality."
+  (if (Vector.same-dimensionality? a b)
+    (Vector.new-from-array
+      (icollect [i v (ipairs a)]
+        (/ v (. b i))))
+    nil))
+
+;; Convenience aliases for use with non-vector arrays.
+(set Vector.equals? Vector._mt.__eq)
+(set Vector.add Vector._mt.__add)
+(set Vector.subtract Vector._mt.__sub)
+(set Vector.multiply Vector._mt.__mul)
+(set Vector.divide Vector._mt.__div)
 
 Vector
