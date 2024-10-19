@@ -118,4 +118,28 @@
   "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
   (Vector.divide vector (Vector.magnitude vector)))
 
+;; Scratch work to enumerate cases that can potentially
+;; occur in a num-to-vec function:
+;;
+;; a.vec b.num -> convert b to a dim
+;; a.num b.vec -> convert a to b dim
+;; a.vec b.vec -> return both
+;; a.num b.num -> error
+
+;; This variant of the dimensionality method is needed in order
+;; to allow seamless usage of scalars in vector arithmetic operations.
+(fn Vector.dimensionality-protected [vector]
+  "Gets the dimensionality of a vector with a protected call, returning nil if an error was generated."
+  (let [[no-error? dimensionality]
+          (table.pack
+            (pcall
+              (fn [v] (length v))
+              vector))]
+    (if no-error?
+      dimensionality
+      nil)))
+
+;; Not yet implemented.
+(fn Vector.num-to-vec [a b])
+
 Vector
