@@ -90,4 +90,13 @@
 (set Vector.multiply Vector._mt.__mul)
 (set Vector.divide Vector._mt.__div)
 
+(fn Vector.sum-components [vector]
+  "Sums the components of the provided vector or array."
+  (faccumulate [sum 0 component-index 1 (length vector)]
+    (+ sum (. vector component-index))))
+
+(fn Vector.dot [a b]
+  "Returns the dot product of the two provided vectors or arrays."
+  (Vector.sum-components (Vector.multiply a b)))
+
 Vector
