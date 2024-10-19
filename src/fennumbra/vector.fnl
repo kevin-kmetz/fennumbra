@@ -118,14 +118,6 @@
   "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
   (Vector.divide vector (Vector.magnitude vector)))
 
-;; Scratch work to enumerate cases that can potentially
-;; occur in a num-to-vec function:
-;;
-;; a.vec b.num -> convert b to a dim
-;; a.num b.vec -> convert a to b dim
-;; a.vec b.vec -> return both
-;; a.num b.num -> error
-
 ;; This variant of the dimensionality method is needed in order
 ;; to allow seamless usage of scalars in vector arithmetic operations.
 (fn Vector.dimensionality-protected [vector]
@@ -143,5 +135,16 @@
   "Converts a scalar value into a vector of specified dimensions where all components are the scalar value."
   (fcollect [i 1 dimensionality]
     scalar))
+
+;; The method enables scalars to be used by vector arithmetic operators without
+;; dedicated and separate methods to do so.
+(fn Vector.convert-if-scalar [a b]
+  "Takes two values which can be either vectors or scalars - if one is scalar, converts it to same dimensions as the vector."
+  (case [(Vector.dimensionality-protected a)
+         (Vector.dimensionality-protected b)]
+    [nil dim] [(Vector.scalar-to-vector a dim) b]
+    [dim nil] [a (Vector.scalar-to-vector b dim)]
+    [nil nil] (error "Impossible to convert two scalars to any meaningful vectors.")
+    _         [a b]))
 
 Vector
