@@ -99,4 +99,23 @@
   "Returns the dot product of the two provided vectors or arrays."
   (Vector.sum-components (Vector.multiply a b)))
 
+(fn Vector.magnitude [vector]
+  "Returns the length/magnitude/norm of a given vector or array."
+  (math.sqrt (Vector.dot vector vector)))
+
+;; Convenience aliases for the vector magnitude function.
+;;
+;; There is merit in not overriding the default __len metamethod for
+;; vectors, since having the __len method return dimensionality makes
+;; many of these methods compatible with arrays without having to have
+;; them cast as vectors.
+(set Vector.length Vector.magnitude)
+(set Vector.norm Vector.magnitude)
+
+;; Does not function yet, and will not until Vector functions allow
+;; one operand to be scalars. This needs to be implemented soon.
+(fn Vector.normalize [vector]
+  "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
+  (Vector.divide vector (Vector.magnitude vector)))
+
 Vector
