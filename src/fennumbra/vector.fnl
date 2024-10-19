@@ -84,11 +84,12 @@
 
 (fn Vector._mt.__sub [a b]
   "For two vectors or arrays of the same dimensionality, subtracts the second from the first."
-  (if (Vector.same-dimensionality? a b)
-    (Vector.new-from-array
-      (icollect [i v (ipairs a)]
-        (- v (. b i))))
-    nil))
+  (let [[a b] (Vector.convert-if-scalar a b)]
+    (if (Vector.same-dimensionality? a b)
+      (Vector.new-from-array
+        (icollect [i v (ipairs a)]
+          (- v (. b i))))
+      nil)))
 
 (fn Vector._mt.__unm [vector]
   "Negates all components of a vector or array."
@@ -98,19 +99,21 @@
 
 (fn Vector._mt.__mul [a b]
   "Multiplies two vectors or arrays of the same dimensionality."
-  (if (Vector.same-dimensionality? a b)
-    (Vector.new-from-array
-      (icollect [i v (ipairs a)]
-        (* v (. b i))))
-    nil))
+  (let [[a b] (Vector.convert-if-scalar a b)]
+    (if (Vector.same-dimensionality? a b)
+      (Vector.new-from-array
+        (icollect [i v (ipairs a)]
+          (* v (. b i))))
+      nil)))
 
 (fn Vector._mt.__div [a b]
   "Divides the second vector or array into the first, assuming they have the same dimensionality."
-  (if (Vector.same-dimensionality? a b)
-    (Vector.new-from-array
-      (icollect [i v (ipairs a)]
-        (/ v (. b i))))
-    nil))
+  (let [[a b] (Vector.convert-if-scalar a b)]
+    (if (Vector.same-dimensionality? a b)
+      (Vector.new-from-array
+        (icollect [i v (ipairs a)]
+          (/ v (. b i))))
+      nil)))
 
 ;; Convenience aliases for use with non-vector arrays.
 (set Vector.equals? Vector._mt.__eq)
@@ -142,8 +145,6 @@
 (set Vector.length Vector.magnitude)
 (set Vector.norm Vector.magnitude)
 
-;; Does not function yet, and will not until Vector functions allow
-;; one operand to be scalars. This needs to be implemented soon.
 (fn Vector.normalize [vector]
   "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
   (Vector.divide vector (Vector.magnitude vector)))
