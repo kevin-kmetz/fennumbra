@@ -31,6 +31,35 @@
   "Returns true if the two provided vectors have the same number of components."
   (= (length a) (length b)))
 
+;; This variant of the dimensionality method is needed in order
+;; to allow seamless usage of scalars in vector arithmetic operations.
+(fn Vector.dimensionality-protected [vector]
+  "Gets the dimensionality of a vector with a protected call, returning nil if an error was generated."
+  (let [[no-error? dimensionality]
+          (table.pack
+            (pcall
+              (fn [v] (length v))
+              vector))]
+    (if no-error?
+      dimensionality
+      nil)))
+
+(fn Vector.scalar-to-vector [scalar dimensionality]
+  "Converts a scalar value into a vector of specified dimensions where all components are the scalar value."
+  (fcollect [i 1 dimensionality]
+    scalar))
+
+;; The method enables scalars to be used by vector arithmetic operators without
+;; dedicated and separate methods to do so.
+(fn Vector.convert-if-scalar [a b]
+  "Takes two values which can be either vectors or scalars - if one is scalar, converts it to same dimensions as the vector."
+  (case [(Vector.dimensionality-protected a)
+         (Vector.dimensionality-protected b)]
+    [nil dim] [(Vector.scalar-to-vector a dim) b]
+    [dim nil] [a (Vector.scalar-to-vector b dim)]
+    [nil nil] (error "Impossible to convert two scalars to any meaningful vectors.")
+    _         [a b]))
+
 (fn Vector._mt.__eq [a b]
   "Returns true if two vectors or arrays have the same dimensionality and have equal components."
   (if (not (Vector.same-dimensionality? a b))
@@ -46,11 +75,12 @@
 
 (fn Vector._mt.__add [a b]
   "Sums two vectors or arrays of the same dimensionality."
-  (if (Vector.same-dimensionality? a b)
-    (Vector.new-from-array
-      (icollect [i v (ipairs a)]
-        (+ v (. b i))))
-    nil))
+  (let [[a b] (Vector.convert-if-scalar a b)]
+    (if (Vector.same-dimensionality? a b)
+      (Vector.new-from-array
+        (icollect [i v (ipairs a)]
+          (+ v (. b i))))
+      nil)))
 
 (fn Vector._mt.__sub [a b]
   "For two vectors or arrays of the same dimensionality, subtracts the second from the first."
@@ -117,34 +147,5 @@
 (fn Vector.normalize [vector]
   "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
   (Vector.divide vector (Vector.magnitude vector)))
-
-;; This variant of the dimensionality method is needed in order
-;; to allow seamless usage of scalars in vector arithmetic operations.
-(fn Vector.dimensionality-protected [vector]
-  "Gets the dimensionality of a vector with a protected call, returning nil if an error was generated."
-  (let [[no-error? dimensionality]
-          (table.pack
-            (pcall
-              (fn [v] (length v))
-              vector))]
-    (if no-error?
-      dimensionality
-      nil)))
-
-(fn Vector.scalar-to-vector [scalar dimensionality]
-  "Converts a scalar value into a vector of specified dimensions where all components are the scalar value."
-  (fcollect [i 1 dimensionality]
-    scalar))
-
-;; The method enables scalars to be used by vector arithmetic operators without
-;; dedicated and separate methods to do so.
-(fn Vector.convert-if-scalar [a b]
-  "Takes two values which can be either vectors or scalars - if one is scalar, converts it to same dimensions as the vector."
-  (case [(Vector.dimensionality-protected a)
-         (Vector.dimensionality-protected b)]
-    [nil dim] [(Vector.scalar-to-vector a dim) b]
-    [dim nil] [a (Vector.scalar-to-vector b dim)]
-    [nil nil] (error "Impossible to convert two scalars to any meaningful vectors.")
-    _         [a b]))
 
 Vector
