@@ -139,7 +139,9 @@
       dimensionality
       nil)))
 
-;; Not yet implemented.
-(fn Vector.num-to-vec [a b])
+(fn Vector.scalar-to-vector [scalar dimensionality]
+  "Converts a scalar value into a vector of specified dimensions where all components are the scalar value."
+  (fcollect [i 1 dimensionality]
+    scalar))
 
 Vector
