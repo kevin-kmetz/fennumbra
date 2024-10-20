@@ -149,4 +149,24 @@
   "Returns a normalized version (same direction/orientation/angle, but as unit vector) of a given vector or array."
   (Vector.divide vector (Vector.magnitude vector)))
 
+;; Aliases for the first possible four components of a vector
+(local x 1)
+(local y 2)
+(local z 3)
+(local w 4)
+
+(fn Vector.cross-product [a b]
+  "Returns the cross product of a 2-dimension or 3-dimension vector."
+  (case [(Vector.same-dimensionality? a b) (Vector.dimensionality a)]
+    [true 2] (- (* (. a x) (. b y))
+                (* (. a y) (. b x)))
+    [true 3] (let [cx (- (* (. a y) (. b z))
+                         (* (. a z) (. b y)))
+                   cy (- (* (. a z) (. b x))
+                         (* (. a x) (. b z)))
+                   cz (- (* (. a x) (. b y))
+                         (* (. a y) (. b x)))]
+              [cx cy cz])
+    _ nil))
+
 Vector
