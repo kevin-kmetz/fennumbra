@@ -29,4 +29,13 @@
       new-matrix
       nil)))
 
+(setmetatable Matrix {:__call
+  (fn [_ ...]
+    "Invokes one of the two matrix constructors based on what is passed in as arguments."
+    (if (and (= (type (?. [...] 1)) :number)
+             (= (type (?. [...] 2)) :number)
+             (= (type (?. [...] 3)) :function))
+      (Matrix.new ...)
+      (Matrix.new-from-vectors ...)))})
+
 Matrix
