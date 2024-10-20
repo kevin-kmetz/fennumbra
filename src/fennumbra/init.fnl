@@ -1,3 +1,5 @@
 ;; fennumbra/init.fnl
 
-{:numtheoretic (require "fennumbra.numtheoretic")}
+{:Complex (require "fennumbra.complex")
+ :numtheoretic (require "fennumbra.numtheoretic")
+ :Vector (require "fennumbra.vector")}
