@@ -19,6 +19,14 @@
     new-matrix))
 
 (fn Matrix.new-from-vectors [...]
-  )
+  "A constructor for a matrix that creates a matrix from vector and array varargs of the same dimensionality."
+  (let [new-matrix {:column-count (length (. [...] 1))
+                    :row-count (length [...])
+                    :rows [...]}]
+    (if (faccumulate [same-size? true i 2 (length [...]) &until (not same-size?)]
+          (and same-size? (= (length (. [...] i))
+                             (length (. [...] (- i 1))))))
+      new-matrix
+      nil)))
 
 Matrix
