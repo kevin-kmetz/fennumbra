@@ -15,7 +15,16 @@
              (Vector.new-from-array
                (fcollect [column 1 column-count]
                  (initializer-func row column)))))
-    (setmetatable new-matrix Matrix._mt)
+    ;; The following odd sequence of three lines enables elements of matrices
+    ;; to be accessed like so in Lua m[row#][column#] or in Fennel (. m row# column#),
+    ;; which is similar to how multi-dimensional arrays are accessed in other languages.
+    ;; This sequence avoids me having to cobble together a custom metatable.
+    ;; I have considered that I could just move the :rows subtable to the numerical indices
+    ;; of the matrix instance itself, but I'll keep it as-is for now. I like having the
+    ;; rows/vectors clearly specified as such, but it's probably not necessary.
+    (set (. new-matrix :_mt) {:__index new-matrix.rows})
+    (setmetatable new-matrix new-matrix._mt)
+    (setmetatable new-matrix.rows Matrix._mt)
     new-matrix))
 
 (fn Matrix.new-from-vectors [...]
