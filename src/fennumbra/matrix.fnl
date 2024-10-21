@@ -62,4 +62,34 @@
     :table  :vector
     _       nil))
 
+;; Not yet fully implemented!
+;;
+;; I'm pausing here because I'm realizing something - all of these
+;; matrix arithmetic operations across the various types they are
+;; compatible with are probably better implemented via closures and
+;; generalized functions that take an operation wrapped in a lambda
+;; (since operations aren't first-class in Fennel).
+;;
+;; The generalized operator method could then implement the proper
+;; dispatching once, along with passing it the parameters and which of
+;; the two are the qualifying type. This would dramatically cut down on
+;; the amount of logic/code that will have to be rewritten but that would
+;; be almost functionally identical to already existing code.
+;;
+;; There are both pros and cons to this approach (more checking and dispatching
+;; occurring), but the cons can most likely be mitigated (using a factory function).
+;;
+;; I must consider this a little more before returning here to implement. It's very
+;; likely that supporting methods would be of benefit here in any case, that would
+;; do things like act on every element in a matrix, act on every row in a matrix,
+;; interact with type x, interact with type y, etc.
+(fn Matrix._mt.__add [a b]
+  (case [a b]
+    [:matrix :matrix] (Matrix.add-to-matrix a b)
+    [:matrix :vector] (Matrix.add-to-vector a b :b)
+    [:vector :matrix] (Matrix.add-to-vector a b :a)
+    [:matrix :scalar] (Matrix.add-to-scalar a b :b)
+    [:scalar :matrix] (Matrix.add-to-scalar a b :a)
+    _                 nil))
+
 Matrix
