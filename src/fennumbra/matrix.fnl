@@ -47,4 +47,19 @@
       (Matrix.new ...)
       (Matrix.new-from-vectors ...)))})
 
+;; The following method is used in overloaded matrix arithmetic
+;; operators to 'intelligently' dispatch the arguments to the proper
+;; arithmetic subfunction based on whether one of the two arguments is
+;; is scalar, vector/array, or matrix (one operand always has to be a matrix).
+(fn Matrix.algebraic-type [object]
+  "Determines (makes an 'informed' guess) if an object is a matrix, vector, or scalar - returns nil otherwise."
+  (case (type object)
+    :number :scalar
+    (where :table
+           (= (type (?. object :rows))
+              :table))
+            :matrix
+    :table  :vector
+    _       nil))
+
 Matrix
